@@ -10,6 +10,14 @@
 @import "../../../sass/app.scss";
 </style>
 
-<script>
+<style>
+main {
+    display: grid;
+    align-content: center;
+    justify-content: center;
 
-</script>
+    width: 100vw;
+    height: 100vh;
+}
+
+</style>
