@@ -8,11 +8,12 @@ import { useForm } from '@inertiajs/vue3';
 let owner = useForm({
     name: '',
     birth: '',
-    gender: null
+    gender: null,
+    addCar: false
 });
 
 let car = useForm({
-    frab: '',
+    fabric: '',
     model: '',
     year: null,
 });
@@ -21,6 +22,10 @@ let clear = function (){
     owner.name = '';
     owner.birth = '';
     owner.gender = null;
+    owner.addCar = false;
+    car.frab = '';
+    car.model = '';
+    car.year = null;
 };
 let sendData = function (){
     owner.transform((data) => {
@@ -67,16 +72,30 @@ let sendData = function (){
                     </div>
 
                     <!--Dados Carro-->
-                    <div class="area-info">
+                    <SecondaryButton
+                        v-if="!owner.addCar"
+                        @click="owner.addCar = !owner.addCar"
+                        style="height: fit-content"
+                        class="align-self-center">
+                    Adicionar Carro</SecondaryButton>
+
+                    <div class="area-info" v-if="owner.addCar">
                         <h2>Dados Carro</h2>
                         <label for="frab">Marca</label>
-                        <input v-model="car.frab" type="text" name="frab" id="frab">
+                        <input v-model="car.fabric" type="text" name="frab" id="frab">
 
                         <label for="model">Modelo</label>
                         <input v-model="car.model" type="text" name="model" id="model">
 
                         <label for="year">Ano</label>
                         <input v-model="car.year" type="text" name="year" id="year">
+
+                        <SecondaryButton
+                            v-if="owner.addCar"
+                            @click="owner.addCar = !owner.addCar"
+                            style="height: fit-content"
+                            class="align-self-center mt-6">
+                            Fechar</SecondaryButton>
                     </div>
 
 
