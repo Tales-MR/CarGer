@@ -4,6 +4,7 @@ import SecondaryButton from "@/Components/SecondaryButton.vue";
 import {useForm, usePage} from '@inertiajs/vue3';
 import  Swal  from "sweetalert2";
 import axios from "axios";
+import { ref } from "vue";
 
 let owner = useForm({
     name: 'Tales',
@@ -18,7 +19,9 @@ let car = useForm({
     year: '2012',
 });
 
-//let carros = useForm([])
+let carros = ref([])
+
+console.log(carros.value);
 
 let clear = function (){
     owner.reset();
@@ -63,7 +66,7 @@ let sendData = async function (){
         onSuccess: Swal.fire({
             icon: "success",
             title: "Sucesso!",
-            text: "Proprietário registrado com sucesso"
+            text: "Proprietário registrado com sucesso",
         })
     });
 }
@@ -74,7 +77,7 @@ let sendData = async function (){
 <template>
     <!-- Modal -->
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-fullscreen">
+        <div class="modal-dialog modal-lg modal-fullscreen-lg-down">
             <form @submit.prevent="sendData()" class="modal-content">
             <div class="modal-content">
                 <div class="modal-header">
@@ -108,7 +111,7 @@ let sendData = async function (){
                         v-if="!owner.addCar"
                         @click="owner.addCar = !owner.addCar"
                         style="height: fit-content"
-                        class="align-self-center">
+                        class="align-self-center justify-self-center">
                     Adicionar Carro</SecondaryButton>
 
                     <div class="area-info" v-if="owner.addCar">
@@ -117,7 +120,7 @@ let sendData = async function (){
                         <input v-model="car.fabric" type="text" name="frab" id="frab">
 
                         <label for="model">Modelo</label>
-                        <input v-model="car.model" type="text" name="model" id="model">
+                        <input v-model="carros" type="text" name="model" id="model">
 
                         <label for="year">Ano</label>
                         <input v-model="car.year" type="text" name="year" id="year">
@@ -156,6 +159,11 @@ let sendData = async function (){
     width: 300px;
 }
 
+.modal-body {
+    justify-content: space-around;
+    width: 100%;
+}
+
 @media screen and (max-width: 770px) {
     .modal-body {
         flex-direction: column;
@@ -168,13 +176,8 @@ let sendData = async function (){
     }
 }
 
-@media screen and (min-width: 770px) {
-    .modal-body {
-        flex-direction: row;
-        justify-content: space-around;
-        width: 100%;
-    }
-}
+
+
 
 input, select{
     border-radius: 11px;
