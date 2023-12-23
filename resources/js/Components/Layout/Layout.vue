@@ -1,5 +1,7 @@
 <script setup>
+import {usePage} from "@inertiajs/vue3";
 
+let page = usePage();
 </script>
 
 <template>
@@ -19,5 +21,6 @@ main {
     width: 100vw;
     height: 100vh;
 }
-
 </style>
+
+

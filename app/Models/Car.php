@@ -9,5 +9,10 @@ class Car extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'id_owner',
+        'fabric',
+        'model',
+        'year'
+    ];
 }

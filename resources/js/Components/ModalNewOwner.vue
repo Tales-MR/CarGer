@@ -1,39 +1,71 @@
 <script setup>
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
-import { useForm } from '@inertiajs/vue3';
-
-
+import {useForm, usePage} from '@inertiajs/vue3';
+import  Swal  from "sweetalert2";
+import axios from "axios";
 
 let owner = useForm({
-    name: '',
-    birth: '',
-    gender: null,
+    name: 'Tales',
+    birth: '2004-12-13',
+    gender: 1,
     addCar: false
 });
 
 let car = useForm({
-    fabric: '',
-    model: '',
-    year: null,
+    fabric: 'FIAT',
+    model: 'UNO',
+    year: '2012',
 });
 
+//let carros = useForm([])
+
 let clear = function (){
-    owner.name = '';
-    owner.birth = '';
-    owner.gender = null;
-    owner.addCar = false;
-    car.frab = '';
-    car.model = '';
-    car.year = null;
+    owner.reset();
+    car.reset();
 };
-let sendData = function (){
+
+let sendData = async function (){
+
+    const response = (await axios.post('/register/validate/owner', {
+        name: owner.name,
+        birth: owner.birth,
+    })).data;
+
+    if (response.code !== 1){
+        let cancel = false;
+
+        await Swal.fire({
+            icon: "warning",
+            title: "Proprietário duplicado",
+            text: response.message,
+            showCancelButton: true,
+            confirmButtonText: "Confirmar",
+            cancelButtonText: "Cancelar",
+            reverseButtons: true,
+        }).then((result) => {
+            if (!result.isConfirmed){
+                cancel = true;
+            }
+        });
+
+        if (cancel) {
+            return
+        }
+    }
+
     owner.transform((data) => {
         return {
             ...data,
             ...car,
         }
-    }).post('Register/Owner');
+    }).post('register/owner', {
+        onSuccess: Swal.fire({
+            icon: "success",
+            title: "Sucesso!",
+            text: "Proprietário registrado com sucesso"
+        })
+    });
 }
 
 

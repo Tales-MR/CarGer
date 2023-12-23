@@ -2,18 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\OwnerRepositoryInterface;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
-use App\Models\Owner;
-use App\Models\Car;
 use Inertia\Inertia;
 
 class OwnerController extends Controller
 {
+    //Provider criado para injeção de dependência
+    private $ownerRepository;
+
+    public function __construct(OwnerRepositoryInterface $ownerRepository)
+    {
+        $this->ownerRepository = $ownerRepository;
+    }
     public function index()
     {
         return Inertia::render('Owner');
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function store(Request $request)
     {
         $owner = $request->validate([
@@ -23,7 +33,7 @@ class OwnerController extends Controller
         ]);
 
         //Adicionando o proprietário ao banco de dados
-        Owner::create($owner);
+        $owner = $this->ownerRepository->createOwner($owner);
 
         //Checande se um carro foi salvo junto
         $addCar = $request->validate([
@@ -37,19 +47,35 @@ class OwnerController extends Controller
                 'year'   => 'required|string'
             ]);
 
-            $id_owner = Owner::max('id_owner');
-
-            Car::create(
-                array_merge($car, ['id_owner' => $id_owner])
-            );
+            $car = $this->ownerRepository->createCar($car, $this->ownerRepository->getLastIdOwner());
         }
 
-        /*
-        'fabric'      => 'required|string',
-        'model'     => 'required|string',
-        'year'      => 'required|string',
-         */
+        return to_route('Owner');
+    }
 
-        //Preciso checar se existe outro registro dessa pessoa no banco
+    public function validateOwner(Request $request)
+    {
+        $data = $request->validate([
+           'name' => 'required|string',
+           'birth' => 'required|date'
+        ]);
+
+        if ($this->ownerRepository->checkExistingOwner($data['name'], $data['birth'])) {
+            return response()->json([
+                'code' => 0,
+                'message' => 'Já existe uma pessoa com esse nome e data de aniversário. Deseja continuar?',
+            ]);
+        }
+
+        return response()->json([
+           'code' => 1,
+        ]);
+    }
+
+    public function cardOwner()
+    {
+
     }
 }
+
+

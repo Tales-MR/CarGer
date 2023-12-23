@@ -26,7 +26,7 @@ Route::get('/dashboard', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     //Owner area
     Route::get('/', [OwnerController::class, 'index'])->name('Owner');
-    Route::post('/Register/Owner', [OwnerController::class, 'store'])->name('NewOwner');
+    Route::post('/register/owner', [OwnerController::class, 'store'])->name('newOwner');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -34,3 +34,4 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 require __DIR__.'/auth.php';
+require __DIR__.'/api.php';
