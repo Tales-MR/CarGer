@@ -17,13 +17,17 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', [OwnerController::class, 'index'])->middleware(['auth', 'verified']);
+
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
+    //Owner area
+    Route::get('/', [OwnerController::class, 'index'])->name('Owner');
+    Route::post('/Register/Owner', [OwnerController::class, 'store'])->name('NewOwner');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

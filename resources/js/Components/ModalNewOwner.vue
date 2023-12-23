@@ -1,7 +1,8 @@
 <script setup>
 import PrimaryButton from "@/Components/PrimaryButton.vue";
-
+import SecondaryButton from "@/Components/SecondaryButton.vue";
 import { useForm } from '@inertiajs/vue3';
+
 
 
 let owner = useForm({
@@ -27,7 +28,7 @@ let sendData = function (){
             ...data,
             ...car,
         }
-    }).post('newOwner');
+    }).post('Register/Owner');
 }
 
 
@@ -37,6 +38,7 @@ let sendData = function (){
     <!-- Modal -->
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-fullscreen">
+            <form @submit.prevent="sendData()" class="modal-content">
             <div class="modal-content">
                 <div class="modal-header">
 
@@ -44,8 +46,8 @@ let sendData = function (){
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 
                 </div>
-                <div class="modal-body d-flex">
-                    <form @submit.prevent="sendData()" class="modal-body d-flex  align-self-sm-center p-5">
+                <div class="modal-body d-flex modal-body d-flex  align-self-sm-center p-5">
+
 
                     <!--Dados Proprietário-->
                     <div class="area-info">
@@ -77,13 +79,14 @@ let sendData = function (){
                         <input v-model="car.year" type="text" name="year" id="year">
                     </div>
 
-                    </form>
+
                 </div>
                 <div class="modal-footer">
                     <PrimaryButton>Salvar</PrimaryButton>
-                    <PrimaryButton data-bs-dismiss="modal" @click="clear()">Cancelar</PrimaryButton>
+                    <SecondaryButton data-bs-dismiss="modal" @click="clear()">Cancelar</SecondaryButton>
                 </div>
             </div>
+            </form>
         </div>
     </div>
 
