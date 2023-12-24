@@ -13,11 +13,12 @@ return new class extends Migration
     {
         Schema::create('cars', function (Blueprint $table) {
             $table->integer('id_owner');
-            $table->string('fabric', 255);
+            $table->string('id_fabric', 255);
             $table->string('model', 255);
             $table->string('year');
             $table->date('updated_at');
             $table->date('created_at');
+            $table->softDeletes();
         });
     }
 
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('cars');
     }
 };

@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('owners', function (Blueprint $table) {
-            $table->id('id_owner');
+        Schema::create('fabrics', function (Blueprint $table) {
+            $table->id('id_fabric');
             $table->string('name', 255);
-            $table->date('birth');
-            $table->tinyInteger('gender');
+            $table->string('models', 255);
             $table->date('updated_at');
             $table->date('created_at');
             $table->softDeletes();
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('owners');
+        Schema::dropIfExists('fabrics');
     }
 };

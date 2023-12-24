@@ -10,12 +10,13 @@ use Inertia\Inertia;
 class OwnerController extends Controller
 {
     //Provider criado para injeção de dependência
-    private $ownerRepository;
+    private OwnerRepositoryInterface $ownerRepository;
 
     public function __construct(OwnerRepositoryInterface $ownerRepository)
     {
         $this->ownerRepository = $ownerRepository;
     }
+
     public function index()
     {
         $latestFiveOwner = $this->ownerRepository->getLatestOwnersData(3);
@@ -34,8 +35,20 @@ class OwnerController extends Controller
         return Inertia::render('Owner', ['data' => $data]);
     }
 
+    public function renderOwnerInfo($id_owner)
+    {
+        $owner = $this->ownerRepository->getOwnerById($id_owner);
+        $cars = $this->ownerRepository->getAllCarsOwner($id_owner);
 
-    public function store(Request $request)
+        return Inertia::render('Owner/ViewOwnerInfos', [
+            'owner' => $owner,
+            'cars' => $cars,
+            'qtdCars' => count($cars)
+        ]);
+    }
+
+
+    public function store(Request $request): \Illuminate\Http\RedirectResponse
     {
         $owner = $request->validate([
             'name'      => 'required|string',
@@ -46,23 +59,10 @@ class OwnerController extends Controller
         //Adicionando o proprietário ao banco de dados
         $owner = $this->ownerRepository->createOwner($owner);
 
-
-        /*
-        if ($addCar['addCar']) {
-            $car = $request->validate([
-                'fabric' => 'required|string',
-                'model'  => 'required|string',
-                'year'   => 'required|string'
-            ]);
-
-            $car = $this->ownerRepository->createCar($car, $this->ownerRepository->getLastIdOwner());
-        }
-        */
-
         return to_route('Owner');
     }
 
-    public function validateOwner(Request $request)
+    public function validateOwner(Request $request): \Illuminate\Http\JsonResponse
     {
         $data = $request->validate([
            'name' => 'required|string',
@@ -81,7 +81,7 @@ class OwnerController extends Controller
         ]);
     }
 
-    public function getOwnerData(Request $request)
+    public function getOwnerData(Request $request): \Illuminate\Http\JsonResponse
     {
         $data = $request->validate([
            'id_owner' => 'required|string'

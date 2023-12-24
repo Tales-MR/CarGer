@@ -15,7 +15,7 @@ defineEmits(['update:modelValue']);
 
 <template>
     <div class="content">
-        <div class="last-add d-flex flex-wrap justify-content-center overflow-y-auto gap-4" data-bs-toggle="modal" data-bs-target="#viewOwner">
+        <div class="last-add d-flex flex-wrap justify-content-center overflow-y-auto gap-4">
             <div class="card-owner" style="max-width: 18rem; cursor: pointer">
 
                 <div class="title d-flex justify-content-center text-center"><h2 class="fs-3">{{ name }}</h2></div>

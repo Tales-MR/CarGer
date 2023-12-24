@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\OwnerCarController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\OwnerController;
 use Illuminate\Foundation\Application;
@@ -24,9 +25,13 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
+
     //Owner area
     Route::get('/', [OwnerController::class, 'index'])->name('Owner');
+    Route::get('/view/owner/{id_owner}', [OwnerController::class, 'renderOwnerInfo'])->name('viewOwner');
+
     Route::post('/register/owner', [OwnerController::class, 'store'])->name('newOwner');
+    Route::post('/register/owner/ownerCar', [OwnerCarController::class, 'store'])->name('newOwnerCar');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
