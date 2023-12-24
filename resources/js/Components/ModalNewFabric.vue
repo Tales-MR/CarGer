@@ -4,26 +4,21 @@ import SecondaryButton from "@/Components/SecondaryButton.vue";
 import {useForm, usePage} from '@inertiajs/vue3';
 import  Swal  from "sweetalert2";
 import axios from "axios";
-
-
+import {ref} from "vue";
 
 const page = usePage();
 
-let car = useForm({
-    id_owner: page.props.owner[0].id_owner,
-    id_model: '',
-    year: '',
+let fabric = useForm({
+    name: ''
 });
 
-let clear = function (){
-    car.reset();
-};
+const clear = function () {
+    fabric.reset();
+}
 
 let sendData = async function (){
-    const response = (await axios.post('../../register/validate/ownerCar', {
-        id_owner: car.id_owner,
-        id_model: car.id_model,
-        year: car.year,
+    const response = (await axios.post('/register/validate/fabric', {
+        name: fabric.name
     })).data;
 
     if (response.code !== 1){
@@ -31,14 +26,10 @@ let sendData = async function (){
 
         await Swal.fire({ //PopUp
             icon: "warning",
-            title: "Carro duplicado!",
+            title: "Fabricante existente!",
             text: response.message,
-            showCancelButton: true,
-            confirmButtonText: "Confirmar",
-            cancelButtonText: "Cancelar",
-            reverseButtons: true,
         }).then((result) => {
-            if (!result.isConfirmed){
+            if (!result.dismiss){
                 cancel = true;
             }
         });
@@ -48,12 +39,12 @@ let sendData = async function (){
         }
     }
 
-    car.post('../../register/owner/ownerCar', {
+    fabric.post('/register/fabric', {
         onSuccess: () => {
             Swal.fire({ //PopUp
                 icon: "success",
                 title: "Sucesso!",
-                text: "Carro registrado com sucesso!"
+                text: "Fabricante registrado com sucesso!"
             })
         }})
 }
@@ -63,13 +54,13 @@ let sendData = async function (){
 
 <template>
     <!-- Modal -->
-    <div class="modal" id="newOwnerCar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="newOwnerCar" aria-hidden="true">
+    <div class="modal" id="newFabric" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="newFabric" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-fullscreen-lg-down animate__animated animate__bounceIn">
             <form @submit.prevent="sendData()">
                 <div class="modal-content">
                     <div class="modal-header">
 
-                        <h5 class="modal-title" id="staticBackdropLabel">Novo Proprietário</h5>
+                        <h5 class="modal-title" id="staticBackdropLabel">Novo Fabricante</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 
                     </div>
@@ -78,15 +69,9 @@ let sendData = async function (){
 
                         <!--Dados Proprietário-->
                         <div class="area-info">
-                            <h2 class="align-self-center">Dados do Carro</h2>
-                            <label for="fabric">Fabricante</label>
-                            <input v-model="car.fabric" type="text" name="fabric" id="fabric">
-
-                            <label for="model">Modelo</label>
-                            <input v-model="car.id_model" type="text" name="model" id="model">
-
-                            <label for="year">Ano</label>
-                            <input v-model="car.year" type="text" name="year" id="year">
+                            <h2 class="align-self-center">Fabricante</h2>
+                            <label for="fabric">Nome</label>
+                            <input v-model="fabric.name" type="text" name="fabric" id="fabric">
                         </div>
                     </div>
                     <div class="modal-footer">

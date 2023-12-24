@@ -31,7 +31,7 @@ const chooseLink = () => {
                     </Link>
                 </li>
                 <li class="elemento_menu">
-                    <Link @click="chooseLink" href="user.funcao !== 0 ? route('admin.myReq') : route('aluno.myReq')" class="Link_de_Redirecionamento">
+                    <Link @click="chooseLink" href="/view/fabrics" class="Link_de_Redirecionamento">
                         <span class="link_de_texto">Fabricantes</span>
                     </Link>
                 </li>

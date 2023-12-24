@@ -47,6 +47,15 @@ class OwnerController extends Controller
         ]);
     }
 
+    public function edit(Request $request)
+    {
+
+    }
+
+    public function delete(Request $request)
+    {
+
+    }
 
     public function store(Request $request): \Illuminate\Http\RedirectResponse
     {

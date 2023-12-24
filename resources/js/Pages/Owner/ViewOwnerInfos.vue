@@ -4,25 +4,10 @@ import SecondaryButton from "@/Components/SecondaryButton.vue";
 import ModalNewCar from "@/Components/ModalNewCar.vue";
 import {useGlobalStore} from "@/Stores/globalStore.js";
 import {Link, usePage} from "@inertiajs/vue3";
-import {ref} from "vue";
-import {useForm} from "@inertiajs/vue3";
-import axios from "axios";
+import ModalViewCar from "@/Components/ModalViewCar.vue";
 
 const page = usePage();
 const globalStore = useGlobalStore();
-
-const vehicleType = 'someType';
-const brandId = 'someBrandId';
-const modelId = 'someModelId';
-const yearId = 'someYearId';
-
-const response = axios.get('https://www.tabelafipebrasil.com/api/js/tabelafipe-widget.min.js');
-
-console.log(response.data);
-
-
-
-
 
 </script>
 
@@ -45,8 +30,11 @@ console.log(response.data);
 
             <div class="cars" v-if="page.props.qtdCars > 0">
                 <h2 class="align-self-center text-center">Carros Registrados</h2>
-                <div class="car overflow-y-auto overflow-x-hidden" style="max-height: 300px; margin-top: -5px">
-                    <div v-for="car in page.props.cars" class="area-info d-flex flex-row content-owner justify-between">
+                <div class="overflow-y-auto overflow-x-hidden" style="max-height: 300px; margin-top: -5px">
+                    <div v-for="car in page.props.cars"
+                         class="area-info car  d-flex flex-row flex-wrap content-owner justify-between gap-3"
+                         data-bs-toggle="modal" data-bs-target="#showCar"
+                    >
                         <div class="camp">
                         <label for="name">Fabricante</label>
                         <h5>{{  }}</h5>
@@ -54,12 +42,17 @@ console.log(response.data);
 
                         <div class="camp">
                         <label for="birth">Modelo</label>
-                        <h5>{{ car.model }}</h5>
+                        <h5>{{ car.id_model }}</h5>
                         </div>
 
                         <div class="camp">
                         <label for="gender">Ano</label>
                         <h5>{{ car.year }}</h5>
+                        </div>
+
+                        <div class="camp">
+                            <label for="gender">Última revisão</label>
+                            <h5>{{ car.year }}</h5>
                         </div>
                     </div>
                 </div>
@@ -75,6 +68,7 @@ console.log(response.data);
             <SecondaryButton data-bs-toggle="modal" data-bs-target="#newOwnerCar" >Adicionar Carro</SecondaryButton>
         </footer>
 
+        <ModalViewCar></ModalViewCar>
         <ModalNewCar></ModalNewCar>
     </main>
 </template>
@@ -102,6 +96,14 @@ main {
     margin: 5px;
 }
 
+.car, .car {
+    cursor: pointer;
+    transition-duration: 0.3s;
+}
+
+.car:hover {
+    background-color: rgba(255, 159, 71, 0.37);
+}
 
 footer {
     align-self: end;

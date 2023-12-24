@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Repositories\EloquentFabricRepository;
 use App\Repositories\EloquentOwnerRepository;
 use App\Repositories\OwnerRepositoryInterface;
+use App\Repositories\FabricRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -14,6 +16,8 @@ class RepositoryServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(OwnerRepositoryInterface::class, EloquentOwnerRepository::class);
+
+        $this->app->bind(FabricRepositoryInterface::class, EloquentFabricRepository::class);
     }
 
     /**

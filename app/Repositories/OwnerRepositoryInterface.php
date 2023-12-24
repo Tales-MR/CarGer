@@ -6,9 +6,7 @@ interface OwnerRepositoryInterface
 {
     public function createOwner(array $data);
     public function createCar(array $data);
-    public function createFabric(array $data);
     public function deleteOwner($idOwner);
-    public function deleteFabric($idFabric);
     public function deleteCarOwner(array $data, $idOwner);
     public function getLastIdOwner();
     public function checkExistingOwner($name, $birth);

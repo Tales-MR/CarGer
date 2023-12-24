@@ -9,28 +9,19 @@ use Illuminate\Support\Str;
 
 class EloquentOwnerRepository implements OwnerRepositoryInterface
 {
-    public function createOwner(array $data)
+    public function createOwner(array $data): void
     {
-        return Owner::create($data);
+        Owner::create($data);
+
+        return;
     }
 
-
-
-
-    public function createCar(array $data)
+    public function createCar(array $data): void
     {
-        return Car::create(array_merge($data, ['id_fabric' => 'Ford']));
+        Car::create($data);
+
+        return;
     }
-
-
-
-
-    public function createFabric(array $data)
-    {
-        return Fabric::create($data);
-    }
-
-
 
 
     public function deleteOwner($idOwner): \Illuminate\Http\JsonResponse
@@ -45,24 +36,6 @@ class EloquentOwnerRepository implements OwnerRepositoryInterface
 
         return response()->json(['message' => 'Proprietário excluído com sucesso']);
     }
-
-
-
-
-    public function deleteFabric($idFabric)
-    {
-        $fabric = Fabric::find($idFabric);
-
-        if (!$fabric) {
-            return response()->json(['error' => 'Fabricante não encontrado'], 404);
-        }
-
-        $fabric->delete();
-
-        return response()->json(['message' => 'Fabricante excluído com sucesso']);
-    }
-
-
 
 
     public function deleteCarOwner(array $data, $idOwner)
@@ -80,12 +53,11 @@ class EloquentOwnerRepository implements OwnerRepositoryInterface
     }
 
 
-
-
     public function getLastIdOwner()
     {
         return Owner::max('id_owner');
     }
+
 
     public function checkExistingOwner($name, $birth)
     {
@@ -97,20 +69,16 @@ class EloquentOwnerRepository implements OwnerRepositoryInterface
     }
 
 
-
-
     public function checkExistingOwnerCar($idOwner, $model, $year)
     {
         $forModel = Str::upper($model);
 
 
-        return Car::whereRaw("UPPER(model) = '{$forModel}'")
+        return Car::whereRaw("UPPER(id_model) = '{$forModel}'")
             ->whereRaw("year = '{$year}'")
             ->where('id_owner', $idOwner)
             ->exists();
     }
-
-
 
 
     public function getLatestOwnersData($limit)
@@ -122,17 +90,13 @@ class EloquentOwnerRepository implements OwnerRepositoryInterface
     }
 
 
-
-
     public function getAllCarsOwner($idOwner)
     {
         return Car::query()
-            ->orderBy('id_fabric')
+            ->orderBy('id_model')
             ->where('id_owner', $idOwner)
             ->get();
     }
-
-
 
 
     public function getOwnerById($idOwner)

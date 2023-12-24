@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('fabrics', function (Blueprint $table) {
-            $table->id('id_fabric');
-            $table->string('name', 255);
-            $table->date('updated_at');
-            $table->date('created_at');
-            $table->softDeletes();
-        });
+        Schema::create('model_car', function (Blueprint $table) {
+        $table->id('id_model');
+        $table->integer('id_fabric');
+        $table->string('name', 255);
+        $table->date('updated_at');
+        $table->date('created_at');
+        $table->softDeletes();
+    });
     }
 
     /**
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('fabrics');
+        //
     }
 };

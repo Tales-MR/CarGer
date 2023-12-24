@@ -11,9 +11,7 @@ class Car extends Model
 
     protected $fillable = [
         'id_owner',
-        'id_fabric',
-        'fabric',
-        'model',
+        'id_model',
         'year'
     ];
 }

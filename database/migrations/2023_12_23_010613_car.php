@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('cars', function (Blueprint $table) {
             $table->integer('id_owner');
-            $table->string('id_fabric', 255);
-            $table->string('model', 255);
+            $table->string('id_model');
             $table->string('year');
             $table->date('updated_at');
             $table->date('created_at');

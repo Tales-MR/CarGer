@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FabricController;
 use App\Http\Controllers\OwnerCarController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\OwnerController;
@@ -29,9 +30,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Owner area
     Route::get('/', [OwnerController::class, 'index'])->name('Owner');
     Route::get('/view/owner/{id_owner}', [OwnerController::class, 'renderOwnerInfo'])->name('viewOwner');
+    Route::get('/view/fabrics', [FabricController::class, 'index'])->name('viewFabrics');
+    Route::get('/view/fabric/{id_fabric}', [FabricController::class, 'renderFabricInfo'])->name('viewFabricInfo');
 
     Route::post('/register/owner', [OwnerController::class, 'store'])->name('newOwner');
     Route::post('/register/owner/ownerCar', [OwnerCarController::class, 'store'])->name('newOwnerCar');
+    Route::post('/register/fabric', [FabricController::class, 'store'])->name('newFabric');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
