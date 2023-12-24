@@ -18,12 +18,23 @@ class OwnerController extends Controller
     }
     public function index()
     {
-        return Inertia::render('Owner');
+        $latestFiveOwner = $this->ownerRepository->getLatestOwnersData(3);
+        $data = [];
+
+        foreach ($latestFiveOwner as $owner) {
+            $ownerCar = $this->ownerRepository->getAllCarsOwner($owner['id_owner']);
+
+            $data[] = [
+                'owner' => $owner,
+                'ownerCars' => $ownerCar,
+                'qtdCars' => count($ownerCar),
+            ];
+        }
+
+        return Inertia::render('Owner', ['data' => $data]);
     }
 
-    /**
-     * @throws ValidationException
-     */
+
     public function store(Request $request)
     {
         $owner = $request->validate([
@@ -35,11 +46,8 @@ class OwnerController extends Controller
         //Adicionando o proprietário ao banco de dados
         $owner = $this->ownerRepository->createOwner($owner);
 
-        //Checande se um carro foi salvo junto
-        $addCar = $request->validate([
-            'addCar'    => 'boolean',
-        ]);
 
+        /*
         if ($addCar['addCar']) {
             $car = $request->validate([
                 'fabric' => 'required|string',
@@ -49,6 +57,7 @@ class OwnerController extends Controller
 
             $car = $this->ownerRepository->createCar($car, $this->ownerRepository->getLastIdOwner());
         }
+        */
 
         return to_route('Owner');
     }
@@ -72,9 +81,16 @@ class OwnerController extends Controller
         ]);
     }
 
-    public function cardOwner()
+    public function getOwnerData(Request $request)
     {
+        $data = $request->validate([
+           'id_owner' => 'required|string'
+        ]);
 
+        return response()->json([
+            'owner' => $this->ownerRepository->getOwnerById($data['id_owner']),
+            'car' => $this->ownerRepository->getAllCarsOwner($data['id_owner'])
+        ]);
     }
 }
 

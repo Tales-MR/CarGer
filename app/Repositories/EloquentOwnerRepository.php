@@ -33,4 +33,28 @@ class EloquentOwnerRepository implements OwnerRepositoryInterface
         ->where('birth', $birth)
         ->exists();
     }
+
+    public function getLatestOwnersData($limit)
+    {
+        return Owner::query()
+            ->orderBy('id_owner', 'desc')
+            ->limit($limit)
+            ->get();
+    }
+
+
+    public function getAllCarsOwner($idOwner)
+    {
+        return Car::query()
+            ->orderBy('fabric')
+            ->where('id_owner', $idOwner)
+            ->get();
+    }
+
+    public function getOwnerById($idOwner)
+    {
+        return Owner::query()
+            ->where('id_owner', $idOwner)
+            ->get();
+    }
 }

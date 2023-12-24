@@ -1,4 +1,5 @@
 import './bootstrap';
+import 'animate.css';
 import '../css/app.css';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import { createApp, h } from 'vue';

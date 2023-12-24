@@ -19,7 +19,6 @@ main {
     justify-content: center;
 
     width: 100vw;
-    height: 100vh;
 }
 </style>
 

@@ -19,3 +19,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('/register/validate/owner', [OwnerController::class, 'validateOwner'])->name('validateOwner')->middleware('auth');
+Route::post('/view/owner', [OwnerController::class, 'getOwnerData'])->name('viewOwner')->middleware('auth');

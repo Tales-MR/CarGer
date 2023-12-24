@@ -8,4 +8,7 @@ interface OwnerRepositoryInterface
     public function createCar(array $data, $ownerId);
     public function getLastIdOwner();
     public function checkExistingOwner($name, $birth);
+    public function getLatestOwnersData($limit);
+    public function getAllCarsOwner($idOwner);
+    public function getOwnerById($idOwner);
 }
