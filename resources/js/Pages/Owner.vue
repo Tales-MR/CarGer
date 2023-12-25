@@ -38,9 +38,7 @@ let showContent = ref(true);
                     :key="ownerData.owner.id_owner"
                     style="text-decoration: none; color: black; font-family: 'Arial'"
                 >
-                <CardOwner
-
-                           :name="ownerData.owner.name"
+                <CardOwner :name="ownerData.owner.name"
                            :qtd-cars="ownerData.qtdCars">
                 </CardOwner>
                 </Link>

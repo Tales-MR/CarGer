@@ -32,17 +32,14 @@ let page = usePage();
 
 <style>
 html, body{
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
 }
 
 main {
     display: grid;
     align-content: center;
     justify-content: center;
-
-    height: 100%;
-    width: 100%;
 }
 </style>
 

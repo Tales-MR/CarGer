@@ -11,7 +11,8 @@ const page = usePage();
 
 let car = useForm({
     id_owner: page.props.owner[0].id_owner,
-    id_model: '',
+    model: '',
+    fabric: '',
     year: '',
 });
 
@@ -22,40 +23,82 @@ let clear = function (){
 let sendData = async function (){
     const response = (await axios.post('../../register/validate/ownerCar', {
         id_owner: car.id_owner,
-        id_model: car.id_model,
+        model: car.model,
+        fabric: car.fabric,
         year: car.year,
     })).data;
 
-    if (response.code !== 1){
+    if (response.code === 0){
         let cancel = false;
 
         await Swal.fire({ //PopUp
             icon: "warning",
-            title: "Carro duplicado!",
+            title: "Dados duplicados",
             text: response.message,
             showCancelButton: true,
             confirmButtonText: "Confirmar",
             cancelButtonText: "Cancelar",
             reverseButtons: true,
         }).then((result) => {
-            if (!result.isConfirmed){
+            if (!result.isConfirmed) {
                 cancel = true;
-            }
-        });
+            }}
+        )
 
         if (cancel) {
             return;
         }
+
+        car.post('../../register/owner/ownerCar', {
+            onSuccess: () => {
+                Swal.fire({ //PopUp
+                    icon: "success",
+                    title: "Sucesso!",
+                    text: "Carro registrado com sucesso!"
+                })
+            }
+        })
+    } else if (response.code === 1) {
+        let cancel = false;
+
+        await Swal.fire({ //PopUp
+            icon: "warning",
+            title: "Fabricante inexistente!",
+            text: response.message,
+            showCancelButton: true,
+            confirmButtonText: "Confirmar",
+            cancelButtonText: "Cancelar",
+            reverseButtons: true,
+        }).then((result) => {
+            if (!result.isConfirmed) {
+                cancel = true;
+            }}
+        )
+
+        if (cancel) {
+            return;
+        }
+
+        car.post('/register/owner/validateStoreFabMod', {
+            onSuccess: () => {
+                Swal.fire({ //PopUp
+                    icon: "success",
+                    title: "Sucesso!",
+                    text: "Carro registrado com sucesso!"
+                })
+            }});
+    } else if (response.code === 2) {
+        car.post('../../register/owner/ownerCar', {
+            onSuccess: () => {
+                Swal.fire({ //PopUp
+                    icon: "success",
+                    title: "Sucesso!",
+                    text: "Carro registrado com sucesso!"
+                })
+            }});
     }
 
-    car.post('../../register/owner/ownerCar', {
-        onSuccess: () => {
-            Swal.fire({ //PopUp
-                icon: "success",
-                title: "Sucesso!",
-                text: "Carro registrado com sucesso!"
-            })
-        }})
+
 }
 
 
@@ -83,7 +126,7 @@ let sendData = async function (){
                             <input v-model="car.fabric" type="text" name="fabric" id="fabric">
 
                             <label for="model">Modelo</label>
-                            <input v-model="car.id_model" type="text" name="model" id="model">
+                            <input v-model="car.model" type="text" name="model" id="model">
 
                             <label for="year">Ano</label>
                             <input v-model="car.year" type="text" name="year" id="year">

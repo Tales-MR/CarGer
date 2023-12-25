@@ -32,9 +32,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/view/owner/{id_owner}', [OwnerController::class, 'renderOwnerInfo'])->name('viewOwner');
     Route::get('/view/fabrics', [FabricController::class, 'index'])->name('viewFabrics');
     Route::get('/view/fabric/{id_fabric}', [FabricController::class, 'renderFabricInfo'])->name('viewFabricInfo');
+    Route::get('/view/owner/car/{id_car}/{id_model}', [OwnerCarController::class, 'renderCarInfo'])->name('viewCarInfo');
 
     Route::post('/register/owner', [OwnerController::class, 'store'])->name('newOwner');
     Route::post('/register/owner/ownerCar', [OwnerCarController::class, 'store'])->name('newOwnerCar');
+    Route::post('/register/owner/validateStoreFabMod', [OwnerCarController::class, 'validateStoreFabMod'])->name('validateStoreFabMod');
     Route::post('/register/fabric', [FabricController::class, 'store'])->name('newFabric');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

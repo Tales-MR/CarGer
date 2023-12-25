@@ -8,6 +8,8 @@ export const useGlobalStore = defineStore("global", {
               '1': 'Homem',
               '2': 'Mulher'
             },
+            currentOwner: '',
+
         };
     }
 });

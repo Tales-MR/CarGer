@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Fabric;
+use App\Models\ModelCar;
 use App\Models\Owner;
 use App\Models\Car;
 use Illuminate\Support\Str;
@@ -23,6 +24,10 @@ class EloquentOwnerRepository implements OwnerRepositoryInterface
         return;
     }
 
+    public function createModelCar($model, $idFabric)
+    {
+        return ModelCar::create(['name' => $model, 'id_fabric' => $idFabric]);
+    }
 
     public function deleteOwner($idOwner): \Illuminate\Http\JsonResponse
     {
@@ -68,6 +73,14 @@ class EloquentOwnerRepository implements OwnerRepositoryInterface
         ->exists();
     }
 
+    public function checkExistingModelCar($model)
+    {
+        $model = Str::upper($model);
+
+        return ModelCar::query()
+            ->whereRaw("UPPER(name) = '{$model}'")
+            ->exists();
+    }
 
     public function checkExistingOwnerCar($idOwner, $model, $year)
     {
@@ -99,10 +112,26 @@ class EloquentOwnerRepository implements OwnerRepositoryInterface
     }
 
 
-    public function getOwnerById($idOwner)
+    public function getOwnerById($idOwner): \Illuminate\Database\Eloquent\Collection|array
     {
         return Owner::query()
             ->where('id_owner', $idOwner)
+            ->get();
+    }
+
+    public function getCarById($idCar): \Illuminate\Database\Eloquent\Collection|array
+    {
+        return Car::query()
+            ->where('id_car', $idCar)
+            ->get();
+    }
+
+    public function getModelByName($model): \Illuminate\Database\Eloquent\Collection|array
+    {
+        $model = Str::upper($model);
+
+        return ModelCar::query()
+            ->where('name', $model)
             ->get();
     }
 }

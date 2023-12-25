@@ -4,7 +4,6 @@ import SecondaryButton from "@/Components/SecondaryButton.vue";
 import ModalNewCar from "@/Components/ModalNewCar.vue";
 import {useGlobalStore} from "@/Stores/globalStore.js";
 import {Link, usePage} from "@inertiajs/vue3";
-import ModalViewCar from "@/Components/ModalViewCar.vue";
 
 const page = usePage();
 const globalStore = useGlobalStore();
@@ -13,7 +12,7 @@ const globalStore = useGlobalStore();
 
 <template>
     <main>
-        <div class="d-flex flex-wrap justify-content-center p-5 h-100 overflow-x-hidden">
+        <div class="d-flex flex-wrap justify-content-center p-5 m-2 overflow-x-hidden">
             <div class="owner align-self-stretch">
                 <h2 class="align-self-center text-center">Dados do Proprietário</h2>
                 <div class="area-info content-owner">
@@ -28,16 +27,22 @@ const globalStore = useGlobalStore();
                 </div>
             </div>
 
-            <div class="cars" v-if="page.props.qtdCars > 0">
+            <div class="cars d-flex flex-column overflow-y-hidden" v-if="page.props.qtdCars > 0">
                 <h2 class="align-self-center text-center">Carros Registrados</h2>
-                <div class="overflow-y-auto overflow-x-hidden" style="max-height: 300px; margin-top: -5px">
-                    <div v-for="car in page.props.cars"
-                         class="area-info car  d-flex flex-row flex-wrap content-owner justify-between gap-3"
-                         data-bs-toggle="modal" data-bs-target="#showCar"
-                    >
+                <div class="d-flex flex-column overflow-y-auto overflow-x-hidden"
+                     style="max-height: 300px; margin-top: -5px">
+
+
+                        <Link
+                            v-for="car in page.props.cars"
+                            class="area-info car d-flex flex-row flex-wrap content-owner justify-between gap-3"
+                            :href="`/view/owner/car/${car.id_car}/${car.id_model}`"
+                            key=""
+                            style="text-decoration: none; color: black; font-family: 'Arial';">
+
                         <div class="camp">
                         <label for="name">Fabricante</label>
-                        <h5>{{  }}</h5>
+                        <h5></h5>
                         </div>
 
                         <div class="camp">
@@ -54,7 +59,10 @@ const globalStore = useGlobalStore();
                             <label for="gender">Última revisão</label>
                             <h5>{{ car.year }}</h5>
                         </div>
-                    </div>
+
+                        </Link>
+
+
                 </div>
             </div>
         </div>
@@ -68,7 +76,6 @@ const globalStore = useGlobalStore();
             <SecondaryButton data-bs-toggle="modal" data-bs-target="#newOwnerCar" >Adicionar Carro</SecondaryButton>
         </footer>
 
-        <ModalViewCar></ModalViewCar>
         <ModalNewCar></ModalNewCar>
     </main>
 </template>
@@ -99,6 +106,7 @@ main {
 .car, .car {
     cursor: pointer;
     transition-duration: 0.3s;
+
 }
 
 .car:hover {

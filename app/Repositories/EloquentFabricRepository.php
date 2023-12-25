@@ -10,11 +10,9 @@ use Illuminate\Support\Str;
 
 class EloquentFabricRepository implements FabricRepositoryInterface
 {
-    public function createFabric($data): void
+    public function createFabric($nome)
     {
-        Fabric::create($data);
-
-        return;
+        return Fabric::create(['name' => $nome]);
     }
 
 
@@ -54,18 +52,17 @@ class EloquentFabricRepository implements FabricRepositoryInterface
     }
 
 
-    public function getFabricById($idFabric): \Illuminate\Database\Eloquent\Collection|array
+    public function getFabricBy($index, $by): \Illuminate\Database\Eloquent\Collection|array
     {
         return Fabric::query()
-            ->orderBy('id_fabric')
-            ->where('id_owner', $idOwner)
+            ->whereRaw("UPPER('{$index}') = UPPER('{$by}')")
             ->get();
     }
 
 
     public function checkExistingFabric($name)
     {
-        $forName = Str::upper($name['name']);
+        $forName = Str::upper($name);
 
         return Fabric::whereRaw("UPPER(name) = '{$forName}'")
             ->exists();
