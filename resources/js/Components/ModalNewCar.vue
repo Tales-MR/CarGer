@@ -4,8 +4,9 @@ import SecondaryButton from "@/Components/SecondaryButton.vue";
 import {useForm, usePage} from '@inertiajs/vue3';
 import  Swal  from "sweetalert2";
 import axios from "axios";
+import {useGlobalStore} from "@/Stores/globalStore.js";
 
-
+const globalStore = useGlobalStore();
 
 const page = usePage();
 
@@ -20,85 +21,176 @@ let clear = function (){
     car.reset();
 };
 
-let sendData = async function (){
-    const response = (await axios.post('../../register/validate/ownerCar', {
-        id_owner: car.id_owner,
+
+
+
+
+let sendDataStageOne = async function () {
+    console.log('1');
+
+    globalStore.response = (await axios.post('../../register/validate/ownerCar/one', {
         model: car.model,
         fabric: car.fabric,
-        year: car.year,
     })).data;
 
-    if (response.code === 0){
+    await sendDataStageTwo();
+}
+
+
+
+let sendDataStageTwo = async function (){
+    console.log('2');
+
+    if (globalStore.response.code === 1) { //Fabricante não existe
         let cancel = false;
 
         await Swal.fire({ //PopUp
             icon: "warning",
-            title: "Dados duplicados",
-            text: response.message,
+            title: "Fabricante Inexistente!",
+            text: globalStore.response.message,
             showCancelButton: true,
             confirmButtonText: "Confirmar",
             cancelButtonText: "Cancelar",
             reverseButtons: true,
         }).then((result) => {
-            if (!result.isConfirmed) {
-                cancel = true;
-            }}
-        )
-
-        if (cancel) {
-            return;
-        }
-
-        car.post('../../register/owner/ownerCar', {
-            onSuccess: () => {
-                Swal.fire({ //PopUp
-                    icon: "success",
-                    title: "Sucesso!",
-                    text: "Carro registrado com sucesso!"
-                })
+                if (!result.isConfirmed) {
+                    cancel = true;
+                }
             }
-        })
-    } else if (response.code === 1) {
-        let cancel = false;
-
-        await Swal.fire({ //PopUp
-            icon: "warning",
-            title: "Fabricante inexistente!",
-            text: response.message,
-            showCancelButton: true,
-            confirmButtonText: "Confirmar",
-            cancelButtonText: "Cancelar",
-            reverseButtons: true,
-        }).then((result) => {
-            if (!result.isConfirmed) {
-                cancel = true;
-            }}
         )
 
         if (cancel) {
             return;
         }
 
-        car.post('/register/owner/validateStoreFabMod', {
-            onSuccess: () => {
-                Swal.fire({ //PopUp
-                    icon: "success",
-                    title: "Sucesso!",
-                    text: "Carro registrado com sucesso!"
-                })
-            }});
-    } else if (response.code === 2) {
-        car.post('../../register/owner/ownerCar', {
-            onSuccess: () => {
-                Swal.fire({ //PopUp
-                    icon: "success",
-                    title: "Sucesso!",
-                    text: "Carro registrado com sucesso!"
-                })
-            }});
+        globalStore.response = (await axios.post('../../register/validate/ownerCar/two', {
+            model: car.model,
+            fabric: car.fabric,
+        })).data; //Next stage
     }
 
+    await sendDataStageThree();
+}
 
+let sendDataStageThree = async function () {
+    console.log('3');
+
+    if (globalStore.response.code === 2) { //Stage Three
+        //Fabrica criada ou já existente -> Modelo
+
+        globalStore.response = (await axios.post('../../register/validate/ownerCar/three', {
+            model: car.model,
+            id_fabric: globalStore.response.id_fabric,
+        })).data;
+    }
+
+    await sendDataStageFour();
+}
+
+
+let sendDataStageFour = async function () {
+    console.log('4');
+
+    if (globalStore.response.code === 3) {
+        //Modelo criado -> Verificar se o owner já possui o carro
+
+        globalStore.response = (await axios.post('../../register/validate/ownerCar/four', {
+            id_model: globalStore.response.id_model,
+            id_owner: car.id_owner,
+            year: car.year,
+        })).data;
+    }
+
+    if (globalStore.response.code === 96) {
+        //Modelo em mais de uma fábrica
+        let cancel = false;
+
+        await Swal.fire({ //PopUp
+            icon: "warning",
+            title: "Modelo duplicado!",
+            text: globalStore.response.message,
+            showCancelButton: true,
+            confirmButtonText: "Confirmar",
+            cancelButtonText: "Cancelar",
+            reverseButtons: true,
+        }).then((result) => {
+            if (!result.isConfirmed) {
+                cancel = true;
+            }
+        })
+
+        if (cancel) {
+            return;
+        }
+
+        globalStore.response = (await axios.post('../../register/validate/ownerCar/four', {
+            id_model: globalStore.response.id_model,
+            id_owner: car.id_owner,
+            year:     car.year,
+        })).data;
+    }
+
+    await sendDataStageFive();
+}
+
+
+
+let sendDataStageFive = async function () {
+    console.log('5');
+
+    if (globalStore.response.code === 4) {
+        //Carro duplicado
+
+        let cancel = false;
+
+        await Swal.fire({ //PopUp
+            icon: "warning",
+            title: "Carro duplicado!",
+            text: globalStore.response.message,
+            showCancelButton: true,
+            confirmButtonText: "Confirmar",
+            cancelButtonText: "Cancelar",
+            reverseButtons: true,
+        }).then((result) => {
+            if (!result.isConfirmed) {
+                cancel = true;
+            }
+        })
+
+        if (cancel) {
+            return
+        }
+
+
+        globalStore.response = (await axios.post('../../register/validate/ownerCar/store', {
+            id_model: globalStore.response.id_model,
+            id_owner: globalStore.response.id_owner,
+            year: globalStore.response.year,
+        })).data;
+    }
+
+    if (globalStore.response.code === 5) {
+
+        globalStore.response = (await axios.post('../../register/validate/ownerCar/store', {
+            id_model: globalStore.response.id_model,
+            id_owner: globalStore.response.id_owner,
+            year: globalStore.response.year,
+        })).data;
+    }
+
+    await sendDataStageStore()
+}
+
+let sendDataStageStore = async function () {
+    console.log('6');
+
+    if (globalStore.response.code === 10) {
+        await Swal.fire({ //PopUp
+            icon: "success",
+            title: "Carro cadastrado!",
+            text: globalStore.response.message,
+        });
+    }
 }
 
 
@@ -108,7 +200,7 @@ let sendData = async function (){
     <!-- Modal -->
     <div class="modal" id="newOwnerCar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="newOwnerCar" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-fullscreen-lg-down animate__animated animate__bounceIn">
-            <form @submit.prevent="sendData()">
+            <form @submit.prevent="sendDataStageOne()">
                 <div class="modal-content">
                     <div class="modal-header">
 

@@ -27,7 +27,7 @@ class FabricController extends Controller
             'name' => 'required|string',
         ]);
 
-        return $this->fabricRepository->createFabric($name);
+        return $this->fabricRepository->createFabric($name['name']);
     }
 
     public function edit(Request $request)
@@ -40,13 +40,13 @@ class FabricController extends Controller
 
     }
 
-    public function validateFabric(Request $request)
+    public function validateFabric(Request $request): \Illuminate\Http\JsonResponse
     {
         $name = $request->validate([
             'name' => 'required|string',
         ]);
 
-        if ($this->fabricRepository->checkExistingFabric($name)) {
+        if ($this->fabricRepository->checkExistingFabric($name['name'])) {
 
             return response()->json([
                 'code' => 0,

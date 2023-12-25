@@ -35,7 +35,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/view/owner/car/{id_car}/{id_model}', [OwnerCarController::class, 'renderCarInfo'])->name('viewCarInfo');
 
     Route::post('/register/owner', [OwnerController::class, 'store'])->name('newOwner');
-    Route::post('/register/owner/ownerCar', [OwnerCarController::class, 'store'])->name('newOwnerCar');
+    Route::post('/register/owner/ownerCar/stageone', [OwnerCarController::class, 'store'])->name('newOwnerCar');
     Route::post('/register/owner/validateStoreFabMod', [OwnerCarController::class, 'validateStoreFabMod'])->name('validateStoreFabMod');
     Route::post('/register/fabric', [FabricController::class, 'store'])->name('newFabric');
 

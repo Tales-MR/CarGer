@@ -82,13 +82,22 @@ class EloquentOwnerRepository implements OwnerRepositoryInterface
             ->exists();
     }
 
+    public function checkExistingModelCarInFab($model): bool
+    {
+        $model = Str::upper($model);
+
+        return ModelCar::query()
+            ->whereRaw("UPPER(name) = '{$model}'")
+            ->exists();
+    }
+
     public function checkExistingOwnerCar($idOwner, $model, $year)
     {
         $forModel = Str::upper($model);
 
 
-        return Car::whereRaw("UPPER(id_model) = '{$forModel}'")
-            ->whereRaw("year = '{$year}'")
+        return Car::where('id_model', $forModel)
+            ->where('year', $year)
             ->where('id_owner', $idOwner)
             ->exists();
     }

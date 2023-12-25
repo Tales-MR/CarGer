@@ -12,6 +12,7 @@ interface OwnerRepositoryInterface
     public function getLastIdOwner();
     public function checkExistingOwner($name, $birth);
     public function checkExistingModelCar($model);
+    public function checkExistingModelCarInFab($model);
     public function checkExistingOwnerCar($idOwner, $model, $year);
     public function getLatestOwnersData($limit);
     public function getAllCarsOwner($idOwner);

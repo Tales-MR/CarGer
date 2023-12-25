@@ -43,55 +43,140 @@ class OwnerCarController extends Controller
 
     }
 
-    public function validateOwnerCarModFab(Request $request): \Illuminate\Http\JsonResponse
+    //Stages of validate new car
+
+    public function validateStageOne(Request $request): \Illuminate\Http\JsonResponse
     {
         $data = $request->validate([
-            'id_owner'  => 'required|integer',
             'model'     => 'required|string',
             'fabric'    => 'required|string',
-            'year'      => 'required|string'
         ]);
 
-        if (!$this->ownerRepository->checkExistingModelCar($data['model'])
-            && $this->fabricRepository->checkExistingFabric($data['fabric']))
-        {
-            $idFabric = $this->fabricRepository->getFabricBy('name', $data['fabric']);
-            $modelCar = $this->ownerRepository->createModelCar(['model' => $data['model']], ['id_fabric' => $idFabric['id_fabric']]);
 
-            if ($this->ownerRepository->checkExistingOwnerCar($data['id_owner'], $modelCar['id_model'], $data['year'])) {
-                return response()->json([
-                    'code' => 0,
-                    'message' => 'O proprietário atual já possui um carro semelhante, deseja continuar?',
-                ]);
-            }
-        }
-        elseif (!$this->fabricRepository->checkExistingFabric($data['fabric']))
+        //Checando se a fabrica existe
+        if (!$this->fabricRepository->checkExistingFabric($data['fabric']))
         {
             return response()->json([
                 'code' => 1,
-                'message' => 'O Fabricante informado não exite, gostaria de criá-lo e continuar?',
+                'message' => 'O Fabricante não existe, deseja criá-lo?',
+            ]);
+        }
+
+        $fabric = $this->fabricRepository->getFabricBy('name', $data['fabric'])[0];
+
+        return response()->json([
+            'code' => 2,
+            'message' => 'O Fabricante existe!',
+            'id_fabric' => $fabric['id_fabric']
+        ]);
+    }
+
+
+    //Criando am fabrica
+    public function validateStageTwo(Request $request)
+    {
+        $data = $request->validate([
+           'fabric' => 'required|string'
+        ]);
+
+        $fabric = $this->fabricRepository->createFabric($data['fabric'])['id'];
+
+        return response()->json([
+            'code' => 2,
+            'message' => 'O Fabricante existe!',
+            'id_fabric' => $fabric
+        ]);
+    }
+
+
+    //Verificando se o modelo existe
+    public function validateStageThree(Request $request)
+    {
+        $data = $request->validate([
+           'model' => 'required|string',
+           'id_fabric' => 'required|integer'
+        ]);
+
+        $exists = $this->ownerRepository->checkExistingModelCar($data['model']);
+
+        if (!$exists) {
+            $model = $this->ownerRepository->createModelCar($data['model'], $data['id_fabric']);
+
+            return response()->json([
+               'code' => 3,
+               'id_model' => $model['id']
+            ]);
+        }
+
+        $existsInFab = $this->ownerRepository->getModelByName($data['model'])[0];
+
+        //Verificar se a Fabrica atual é a mesma do modelo
+        $fabricModel = $this->fabricRepository->getFabricBy('id_fabric', $existsInFab['id_fabric'])[0];
+
+        if ($fabricModel['id_fabric'] !== $data['id_fabric']) {
+            //Fabrica diferente
+
+            return response()->json([
+                'code' => 96,
+                'message' => 'O Modelo escolhido já existe em outro Fabricante, deseja criá-lo também no Fabricante atual?',
+                'id_model' => $existsInFab['id_model']
+            ]);
+        }
+
+        //Fabrica de origem
+        return response()->json([
+            'code' => 3,
+            'id_model' => $existsInFab['id_model']
+        ]);
+    }
+
+
+    public function validateStageFour(Request $request)
+    {
+        $data = $request->validate([
+            'id_owner' => 'required|integer',
+            'id_model' => 'required|integer',
+            'year'     => 'required|string'
+        ]);
+
+        //Checando se o owner já possui esse carro
+        $exists = $this->ownerRepository->checkExistingOwnerCar($data['id_owner'], $data['id_model'], $data['year']);
+
+        if ($exists) {
+            return response()->json([
+                'code' => 4,
+                'message' => 'O Proprietário já possui o mesmo modelo de carro, deseja adicionar?',
+                'id_owner' => $data['id_owner'],
+                'id_model' => $data['id_model'],
+                'year' => $data['year']
             ]);
         }
 
         return response()->json([
-            'code' => 2,
-            'message' => 'Carro registrado com sucesso!',
+           'code' => 5,
+            'id_owner' => $data['id_owner'],
+            'id_model' => $data['id_model'],
+            'year' => $data['year']
         ]);
     }
 
-    public function validateStoreFabMod(Request $request): void
+    public function validateStageStore(Request $request)
     {
-        $data = $request->validate([
-            'id_owner'  => 'required|integer',
-            'model'     => 'required|string',
-            'fabric'    => 'required|string',
-            'year'      => 'required|string'
-        ]);
+       $data = $request->validate([
+           'id_model'  => 'required|integer',
+           'id_owner' => 'required|integer',
+           'year'     => 'required|string',
+       ]);
 
-        $fabric = $this->fabricRepository->createFabric($data['fabric']);
-        $model = $this->ownerRepository->createModelCar($data['model'], $fabric['id']);
-        $car = $this->ownerRepository->createCar(['data' => [$data, $model]]);
+       $car = $this->ownerRepository->createCar($data);
+
+       return response()->json([
+           'code' => 10,
+           'message' => 'Carro cadastrado com sucesso!'
+       ]);
     }
+
+
 
 
     public function renderCarInfo($idCar, $model)

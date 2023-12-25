@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 interface FabricRepositoryInterface
 {
-    public function createFabric($nome);
+    public function createFabric($name);
     public function deleteFabric($idFabric);
     public function editFabric(array $data, $idFabric);
     public function getAllFabrics();
